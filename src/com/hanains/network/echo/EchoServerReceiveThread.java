@@ -31,7 +31,8 @@ public class EchoServerReceiveThread extends Thread {
 			System.out.println("[서버]연결됨 from " + remoteHostAddress + ":"
 					+ remoteHostPort);
 			/*
-			 * Thread 2개 test while(true){
+			 * Thread 2개 test 
+			 * while(true){
 			 * System.out.println(remoteHostAddress); try { Thread.sleep(1000);
 			 * } catch (InterruptedException e) { // TODO Auto-generated catch
 			 * block e.printStackTrace(); } }
