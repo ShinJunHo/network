@@ -8,7 +8,11 @@ import java.net.Socket;
 
 public class EchoServer {
 	private static final int PORT = 10002;
-
+/*Windows Command 창에서 서버를 실행시
+ * >java -Dfile.encoding=UTF-8 com.hanains.network.echo.EchoServer
+ *  com 이후는 bin 경로에서 패키지를 포함한 모든 경로를 말함.
+ *  
+ * */
 	public static void main(String[] args) {
 		ServerSocket serverSocket = null;
 
