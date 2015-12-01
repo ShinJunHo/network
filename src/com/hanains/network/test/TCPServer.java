@@ -28,7 +28,7 @@ public class TCPServer {
 		
 		//3.연결 요청대기(accept)
 		Socket socket=serverSocket.accept();
-		
+		System.out.println("[socket버퍼사이즈] "+socket.getReceiveBufferSize());
 		//socket port확인하고
 		//read write해보기.
 		
@@ -41,8 +41,52 @@ public class TCPServer {
 		System.out.println("[서버]연결됨 from "+remoteHostAddress+":"+remoteHostPort);
 		
 		
-		//5.데이터 보내기.
+		//5.IOS Stream받아오기
+		InputStream inputStream=socket.getInputStream();
+		OutputStream outputStream=socket.getOutputStream();
+		// 처음 쓰는 부분을 올렸다.
 		
+	
+		try{
+		byte[] buffer = new byte[256];
+		//6.데이터 읽기
+		while(true){
+			
+			int readByteCount=inputStream.read(buffer);
+			//데이터 가 다 올때까지 블락.
+			//-1은 상대방이 소켓 끊었을때.
+			if(readByteCount <0){
+				System.out.println("[서버] 클라이언트로 부터 연결 끊김");
+				break;
+			}
+			String data=new String(buffer,0,readByteCount);
+			System.out.println("[서버] 수신 데이터:"+data);
+		
+			//7.데이터 보내기.
+			//Echo
+			//data="hello world\r\n";
+			outputStream.write(data.getBytes("UTF-8"));//byte array가 와야함
+			outputStream.flush(); // flush는 비운다.
+			
+		
+		}
+		}catch(IOException ex){
+			System.out.println("[서버] 에러:"+ex);
+			
+		
+		}finally{
+			//8.자원정리
+			inputStream.close();
+			outputStream.close();
+			
+			if(socket.isClosed()== false){
+				socket.close();
+			}		
+		}
+		
+		/*
+		//5.데이터 보내기.
+	
 		OutputStream os = socket.getOutputStream();
 		String data="Hello HanaI&S";
 		//os.write(data.getBytes("UTF-8"));
@@ -66,11 +110,9 @@ public class TCPServer {
 			System.out.println(readData);
 			os.flush();
 		}
+		*/
 		
-		//7.socket 닫기
-		if(socket.isClosed()== false){
-			socket.close();
-		}
+				
 		
 		}catch(IOException ex){
 			ex.printStackTrace();
