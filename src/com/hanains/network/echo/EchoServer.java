@@ -17,7 +17,7 @@ public class EchoServer {
 		ServerSocket serverSocket = null;
 
 		Thread thread1;
-		Thread thread2;
+		//Thread thread2;
 
 		try {
 			serverSocket = new ServerSocket();
@@ -27,15 +27,15 @@ public class EchoServer {
 			serverSocket.bind(new InetSocketAddress(localhost, PORT));
 			System.out.println("[서버]바인딩 " + localhost + ":" + PORT);
 			Socket socket = serverSocket.accept();
-			Socket socket1 = serverSocket.accept();
+			//Socket socket1 = serverSocket.accept();
 			System.out.println("[서버] Accpet");
 			// 4.연결 성공한거 넘기기.
 			//두명의 클라이언트를 받기 위한 방법으로 thread 2개 선언하는것을 선택.
 			thread1 = new EchoServerReceiveThread(socket);
 			thread1.start();
-			thread2 = new EchoServerReceiveThread(socket1);
+			/*thread2 = new EchoServerReceiveThread(socket1);
 			thread2.start();
-
+*/
 		} catch (IOException ex) {
 			System.out.println("[서버] 에러:" + ex);
 		} finally {

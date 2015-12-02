@@ -29,7 +29,8 @@ public class EchoClient {
 			
 			while(true){
 				data=scan.nextLine();
-				outputStream.write(data.getBytes("UTF-8"));
+				//outputStream.write(data.getBytes("UTF-8"));
+				outputStream.write((data+"\r\n").getBytes("UTF-8"));
 				byte[] buffer=new byte[256];
 				int readByteCount=inputStream.read(buffer);
 				data=new String(buffer,0,readByteCount,"UTF-8");
