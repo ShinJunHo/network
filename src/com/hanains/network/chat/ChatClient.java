@@ -30,13 +30,21 @@ public class ChatClient {
 					socket.getInputStream(), StandardCharsets.UTF_8));
 			printWriter = new PrintWriter(new OutputStreamWriter(
 					socket.getOutputStream(), StandardCharsets.UTF_8));
-
-			System.out.print("닉네임 >>");
-			String nickname = scanner.nextLine();
-
-			printWriter.println("join:" + nickname);
-			printWriter.flush();
-
+			
+			//닉네임 중복체크
+			while(true){
+				System.out.print("닉네임 >>");
+				String nickname = scanner.nextLine();
+				printWriter.println("join:" + nickname);
+				printWriter.flush();
+				String request = bufferedReader.readLine();
+				String[] tokens=request.split(":");
+				if("fail".equals(tokens[1]) == false){
+					
+					break;
+				}
+				System.out.println("닉네임 중복입니다.");
+			}
 			/*
 			 * nickname 재입력 방지. join ok랑.
 			 */
@@ -64,6 +72,7 @@ public class ChatClient {
 			System.out.println("[클라이언트] 에러 :" + ex);
 		} finally {
 			try {
+				//자원 해제
 				scanner.close();
 				if (bufferedReader != null) {
 					bufferedReader.close();

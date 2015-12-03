@@ -7,9 +7,9 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class ChatServer {
 	private static final int PORT=9999;
@@ -17,19 +17,20 @@ public class ChatServer {
 	public static void main(String[] args){
 		ServerSocket serverSocket =null;
 		List<Writer> listWriters;
-		List<String> nameList;
+		Map<String,Object> nickname;
 		try{
 			//1.서버 소켓 생성
 			serverSocket = new ServerSocket();
 			listWriters=new ArrayList<Writer>();
-			nameList=new ArrayList<String>();
+			nickname=new HashMap();
+			
 			String localhost=InetAddress.getLocalHost().getHostAddress();
 			serverSocket.bind(new InetSocketAddress(localhost,PORT));
 			System.out.println("[서버] 바인딩: "+localhost+":"+PORT);
 			
 			while(true){
 				Socket socket= serverSocket.accept();
-				new ChatServerThread(socket,listWriters,nameList).start();
+				new ChatServerThread(socket,listWriters,nickname).start();
 			}
 			
 		}catch(IOException ex){
