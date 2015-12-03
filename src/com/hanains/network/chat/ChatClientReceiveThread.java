@@ -19,13 +19,14 @@ public class ChatClientReceiveThread extends Thread {
 		while (true) {
 			try {
 				
-				//4.프로토콜 분석.
+				//입력
 				String request = bufferedReader.readLine();
 				if(request == null){
 					System.out.println("클라이언트 연결 끊김");
 					break;
 				}
 				String[] tokens=request.split(":");
+				//4.프로토콜 분석.
 				if("join".equals(tokens[0])){
 					System.out.println(tokens[1]);
 				}else if("message".equals(tokens[0])){
@@ -33,6 +34,8 @@ public class ChatClientReceiveThread extends Thread {
 				}else if("quit".equals(tokens[0])){
 					System.out.println(tokens[1]);
 					break;
+				}else if("talk".equals(tokens[0])){
+					System.out.println(tokens[1]);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

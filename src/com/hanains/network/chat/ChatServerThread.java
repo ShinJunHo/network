@@ -9,15 +9,15 @@ import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 public class ChatServerThread extends Thread {
 
 	private String nickname;
 	private Socket socket;
-	private List<Writer> listWriters;
-	private Map<String, Object> nicknameMap;
+	private Map<String, Writer> nicknameMap;
+	
 	/*
 	 *Map Object에 Writer를 넣고
 	 *run()에 talk: 프로토콜 넣고,
@@ -29,36 +29,39 @@ public class ChatServerThread extends Thread {
 	public ChatServerThread() {
 
 	}
-
-	public ChatServerThread(Socket socket, List<Writer> listWriter,
-			Map<String, Object> name) {
+	
+	public ChatServerThread(Socket socket,Map<String,Writer> name) {
 		this.socket = socket;
-		this.listWriters = listWriter;
 		this.nicknameMap = name;
 	}
-
+	
 	private void addWriter(Writer writer) {
-		synchronized (listWriters) {
-			listWriters.add(writer);
+		synchronized (nicknameMap) {
+			nicknameMap.put(nickname, writer);
 		}
 	}
 	
 	private void broadcast(String data) {
-		synchronized (listWriters) {
-			for (Writer writer : listWriters) {
-				PrintWriter printWriter = (PrintWriter) writer;
+		synchronized (nicknameMap) {
+			for (Map.Entry<String,Writer> map : nicknameMap.entrySet()) {
+				PrintWriter printWriter = (PrintWriter) map.getValue();
 				printWriter.println(data);
 				printWriter.flush();
 			}
 		}
 	}
-	//Writer제거
+	
 	private void removeWriter(Writer writer) {
-		for (int i = 0; i < listWriters.size(); i++) {
-			if (listWriters.get(i).equals(writer)) {
-				listWriters.remove(i);
+
+		synchronized (nicknameMap) {
+			for(Map.Entry<String,Writer> map: nicknameMap.entrySet()){
+				if(map.getValue().equals(writer)){
+					nicknameMap.remove(map.getKey(),writer);
+					break;
+				}
 			}
 		}
+
 	}
 
 	private void doJoin(String nick, Writer writer) {
@@ -73,7 +76,7 @@ public class ChatServerThread extends Thread {
 				return;
 			}
 		}
-		nicknameMap.put(nick, "");
+		nicknameMap.put(nick, writer);
 		this.nickname = nick;
 
 		String data = "join:" + nick + "님이 참여하였습니다." + "\r\n";
@@ -84,12 +87,25 @@ public class ChatServerThread extends Thread {
 		printWriter.flush();
 
 	}
-
+	//귓속말
+	private void doTalk(String nick, String message){
+		
+		synchronized (nicknameMap) {
+			PrintWriter printWriter = (PrintWriter) nicknameMap.get(nick);
+			String data="message:" + "[" + this.nickname + "]" + message + "\r\n";
+			printWriter.println(data);
+			printWriter.flush();
+		}
+	
+	}
+	
+	//메세지
 	private void doMessage(String message) {
 		String data = "message:" + "[" + this.nickname + "]" + message + "\r\n";
 		broadcast(data);
 	}
-
+	
+	//종료
 	private void doQuit(Writer writer) {
 
 		((PrintWriter) writer).println("quit:끝");
@@ -136,6 +152,8 @@ public class ChatServerThread extends Thread {
 				} else if ("message".equals(tokens[0])) {
 					System.out.println(tokens[1]);
 					doMessage(tokens[1]);
+				}else if("talk".equals(tokens[0])){
+					doTalk(tokens[2],tokens[3]);
 				} else if ("quit".equals(tokens[0])) {
 					doQuit(printWriter);
 					break;

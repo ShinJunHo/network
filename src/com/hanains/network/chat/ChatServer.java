@@ -16,12 +16,11 @@ public class ChatServer {
 	
 	public static void main(String[] args){
 		ServerSocket serverSocket =null;
-		List<Writer> listWriters;
-		Map<String,Object> nickname;
+		Map<String,Writer> nickname;
+
 		try{
 			//1.서버 소켓 생성
 			serverSocket = new ServerSocket();
-			listWriters=new ArrayList<Writer>();
 			nickname=new HashMap();
 			
 			String localhost=InetAddress.getLocalHost().getHostAddress();
@@ -30,13 +29,14 @@ public class ChatServer {
 			
 			while(true){
 				Socket socket= serverSocket.accept();
-				new ChatServerThread(socket,listWriters,nickname).start();
+				new ChatServerThread(socket,nickname).start();
 			}
 			
 		}catch(IOException ex){
 			System.out.println("[서버] 에러: "+ex);
 			
 		}finally{
+			//자원해제
 			if(serverSocket != null && serverSocket.isClosed() == false){
 				try {
 					serverSocket.close();

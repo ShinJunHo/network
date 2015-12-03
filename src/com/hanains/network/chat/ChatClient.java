@@ -9,6 +9,13 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+
+/*
+ * 닉네임 중복처리
+ * 귓속말 프로토콜 추가
+ * talk:닉네임:메세지 형식
+ * 
+ * */
 public class ChatClient {
 	private static final String SERVER_IP = "192.168.1.7";
 	private static final int SERVER_PORT = 9999;
@@ -56,13 +63,19 @@ public class ChatClient {
 			while (true) {
 				System.out.print(">>");
 				String input = scanner.nextLine();
-
-				if ("quit".equals(input) == true) {
+				String[] tokens=input.split(":");
+				if ("quit".equals(tokens[0]) == true) {
 					// 8 quit 프로토콜 처리
 					printWriter.println("quit:");
 					printWriter.flush();
 					break;
-				} else {
+					
+				}else if("talk".equals(tokens[0])==true){
+					
+					printWriter.println("talk:"+input);
+					printWriter.flush();
+				}else {
+				
 					// 9.메시지 처리.
 					printWriter.println("message:"+input);
 					printWriter.flush();
