@@ -18,7 +18,14 @@ public class ChatServerThread extends Thread {
 	private Socket socket;
 	private List<Writer> listWriters;
 	private Map<String, Object> nicknameMap;
-
+	/*
+	 *Map Object에 Writer를 넣고
+	 *run()에 talk: 프로토콜 넣고,
+	 *broadcast에서 할때와 처럼 nickname값 빼오면
+	 *귓속말이 전송되겠다.
+	 *
+	 */
+	
 	public ChatServerThread() {
 
 	}
