@@ -165,6 +165,8 @@ public class ChatServerThread extends Thread {
 
 		} catch (IOException ex) {
 			System.out.println("[서버 스레드] 에러: " + ex);
+			// 클라이언트의 비정상 종료 ( 명시적으로 소켓을 닫지 않음 )
+			doQuit(printWriter);
 		} finally {
 			try {
 				//자원 해제
